@@ -3,8 +3,30 @@
 from z3 import *
 from ast import *
 from utils import *
+from posix_ipc import Semaphore, O_CREAT
+import os
 import sys
-import multiprocessing
+import atexit
+
+N_CPUS = 4
+
+## Use semaphore to limit the number of concurrent processes,
+## we allow 4 processes running simultaneously.
+sem = Semaphore("/fork_sem", O_CREAT, 0o644, N_CPUS)
+sem.unlink()
+sem.acquire()
+
+def on_exit():
+  sem.release()
+  ## reap all zombies.
+  try:
+    while True:
+      os.waitpid(0)
+  except:
+    pass
+  log("exit")
+
+atexit.register(on_exit)
 
 def ast(o):
   if hasattr(o, '_ast'):
@@ -16,13 +38,16 @@ def ast(o):
   raise Exception("Trying to make an AST out of %s %s" % (o, type(o)))
 
 def symbolic_bool(sym):
-  ## XXX: limit the number of forked processes.
   pid = os.fork()
-  if pid:
+  ## even we limit the number of processes running simultaneously,
+  ## we still need to fork one process which stays in blocked state
+  ## until the semaphore is active... so, memory usage is a shitty issue.
+  if pid:  # parent
     solver.add(z3expr(ast_eq(sym, ast(True))))
     r = True
     log("assume (%s)" % str(sym))
-  else:
+  else:  # child
+    sem.acquire()
     solver.add(z3expr(ast_eq(sym, ast(False))))
     r = False
     log("assume ¬(%s)" % str(sym))

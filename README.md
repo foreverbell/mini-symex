@@ -27,3 +27,4 @@ Python3.
 
 * z3
 * pygment (for exception pretty printing)
+* posix_ipc

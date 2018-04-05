@@ -44,16 +44,5 @@ def on_excepthook(exctype, value, traceback):
   msg = highlight(msg, lexer, formatter)
   log(msg)
 
-def on_exit():
-  # wait until all child processes done
-  try:
-    while True:
-      os.waitpid(0, 0)
-  except:
-    pass
-  log("exit")
-
 if sys.stderr.isatty():
   sys.excepthook = on_excepthook
-
-atexit.register(on_exit)

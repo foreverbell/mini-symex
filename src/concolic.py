@@ -296,7 +296,7 @@ def concolic(f, eval_pc=None, exit_on_err=True, debug=False):
     try:
       f()
     except:
-      on_excepthook(*sys.exc_info())
+      sys.excepthook(*sys.exc_info())
       if exit_on_err:
         return
       crashes.append(_vals.copy())
