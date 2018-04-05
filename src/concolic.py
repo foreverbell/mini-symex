@@ -1,9 +1,9 @@
 from ast import *
 from utils import *
 from z3 import *
-import Queue
 import ctypes
 import functools
+import queue
 import sys
 
 INT_MAX = 0x7fffffff
@@ -180,16 +180,16 @@ class concolic_int(int):
     res = value(o) * self.__v
     return concolic_int(ast_mul(ast(o), self.__ast), res)
 
-  def __div__(self, o):
+  def __floordiv__(self, o):
     if _check_divided_by_zero:
       check_divided_by_zero(ast(o))
-    res = self.__v / value(o)
+    res = self.__v // value(o)
     return concolic_int(ast_div(self.__ast, ast(o)), res)
 
-  def __rdiv__(self, o):
+  def __rfloordiv__(self, o):
     if _check_divided_by_zero:
       check_divided_by_zero(self.__ast)
-    res = value(o) / self.__v
+    res = value(o) // self.__v
     return concolic_int(ast_div(ast(o), self.__ast), res)
 
   def __mod__(self, o):
@@ -270,15 +270,23 @@ def concolic(f, eval_pc=None, exit_on_err=True, debug=False):
   ## accurately, raise exceptions).
   crashes = []
 
+  class q_item(object):
+    def __init__(self, priority, value):
+      self.priority = priority
+      self.value = value
+
+    def __lt__(self, o):
+      return o.priority.__lt__(self.priority)
+
   ## pending queue.
-  q = Queue.PriorityQueue()
-  q.put((0, {}))
+  q = queue.PriorityQueue()
+  q.put(q_item(0, {}))
 
   ## number of iterations so far.
   iters = 0
 
   while not q.empty():
-    _vals = q.get()[1]
+    _vals = q.get().value
     iters += 1
 
     log("=" * 60)
@@ -314,7 +322,7 @@ def concolic(f, eval_pc=None, exit_on_err=True, debug=False):
         for var in m.decls():
           ## Python integer is signed.
           new_vals[var.name()] = m[var].as_signed_long()
-        q.put((-eval_pc(new_pc), new_vals))
+        q.put(q_item(eval_pc(new_pc), new_vals))
 
         if debug:
           log("%s -> %s" % (map(str, new_pc), new_vals))

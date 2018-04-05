@@ -1,5 +1,6 @@
 from z3 import *
 import abc
+import functools
 import operator
 
 class ast_base(object):
@@ -41,7 +42,7 @@ class ast_func_apply(ast_base):
     return all(sa == oa for (sa, oa) in zip(self.args, o.args))
 
   def __hash__(self):
-    return reduce(operator.xor, [hash(a) for a in self.args], 0)
+    return functools.reduce(operator.xor, [hash(a) for a in self.args], 0)
 
 class ast_unop(ast_func_apply):
   def __init__(self, a):
@@ -146,7 +147,7 @@ class ast_mul(ast_binop):
   def _z3expr(self):
     return z3expr(self.a) * z3expr(self.b)
 
-class ast_div(ast_binop):
+class ast_div(ast_binop):  # floordiv
   def _z3expr(self):
     return z3expr(self.a) / z3expr(self.b)
 

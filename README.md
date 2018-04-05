@@ -2,7 +2,7 @@
 
 ## Overview
 
-Mini symbolic execution engine in Python, to illustrate some basic ideas of
+Mini symbolic execution engine in Python3, to illustrate some basic ideas of
 symbolic execution.
 
 This work is based on these tutorials, I adapt ideas and several code from them.
@@ -22,6 +22,8 @@ This work is based on these tutorials, I adapt ideas and several code from them.
 Tests are started with `test_` in `src` folder, execute them to have fun!
 
 ## Requirements
+
+Python3.
 
 * z3
 * pygment (for exception pretty printing)

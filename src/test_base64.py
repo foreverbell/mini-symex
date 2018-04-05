@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 from concolic import *
 
@@ -25,7 +25,7 @@ def byte_encode(x):
 
 def base64_encode(data):
   length = len(data)
-  output = [ord('=')] * ((length + 2) / 3 * 4)
+  output = [ord('=')] * ((length + 2) // 3 * 4)
   ptr, i = 0, 0
 
   while len(data) >= 3:
@@ -51,7 +51,7 @@ def base64_encode(data):
   return output
 
 def test_me():
-  data = [mk_int(chr(i + ord('a'))) for i in xrange(6)]
+  data = [mk_int(chr(i + ord('a'))) for i in range(6)]
 
   ## assume all input characters are visible.
   def assume_ok(data):
@@ -70,8 +70,8 @@ def test_me():
 
   if assume_ok(data):
     if bytes_equal(base64_encode(data), "aDFiYWJ5"):
-      ## 841 rounds of iteration to trigger this assertion.
-      ## [841] a = 0x68, b = 0x31, c = 0x62, d = 0x61, e = 0x62, f = 0x79
+      ## 679 rounds of iteration to trigger this assertion.
+      ## [679] a = 0x68, b = 0x31, c = 0x62, d = 0x61, e = 0x62, f = 0x79
       assert False, "reach me"
 
 ## heuristic to prioritize the path leads to `assert False`.

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 from concolic import *
 
@@ -40,7 +40,7 @@ if __name__ == "__main__":
   log('test_me_fail')
   concolic(test_me_fail)
 
-  for i in xrange(3):
+  for i in range(3):
     log('')
 
   log('test_me')

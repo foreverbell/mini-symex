@@ -3,8 +3,8 @@
 from z3 import *
 from ast import *
 from utils import *
-import os
 import sys
+import multiprocessing
 
 def ast(o):
   if hasattr(o, '_ast'):
@@ -82,10 +82,10 @@ class symbolic_int(object):
   def __rmul__(self, o):
     return symbolic_int(ast_mul(ast(o), self.__ast))
 
-  def __div__(self, o):
+  def __floordiv__(self, o):
     return symbolic_int(ast_div(self.__ast, ast(o)))
 
-  def __rdiv__(self, o):
+  def __rfloordiv__(self, o):
     return symbolic_int(ast_div(ast(o), self.__ast))
 
   def __mod__(self, o):

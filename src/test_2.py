@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 from concolic import *
 
@@ -7,7 +7,7 @@ def test_me():
   value = 0
   bs = []
 
-  for i in xrange(5):
+  for i in range(5):
     bs.append(mk_int("byte[%d]" % i))
 
   if num == 111111111:
