@@ -1,6 +1,7 @@
 from ast import *
 from utils import *
 from z3 import *
+from collections import defaultdict
 import ctypes
 import functools
 import queue
@@ -245,8 +246,6 @@ class concolic_int(int):
 ## create a concolic_int instance.
 def mk_int(id):
   global _vals
-  if id not in _vals:
-    _vals[id] = 0
   return concolic_int(ast_int(id), _vals[id])
 
 def flip_pc(pc):
@@ -280,7 +279,7 @@ def concolic(f, eval_pc=None, exit_on_err=True, debug=False):
 
   ## pending queue.
   q = queue.PriorityQueue()
-  q.put(q_item(0, {}))
+  q.put(q_item(0, defaultdict(int)))
 
   ## number of iterations so far.
   iters = 0
@@ -318,7 +317,7 @@ def concolic(f, eval_pc=None, exit_on_err=True, debug=False):
       res = solver.check()
       if res == sat:
         m = solver.model()
-        new_vals = {}
+        new_vals = defaultdict(int)
         for var in m.decls():
           ## Python integer is signed.
           new_vals[var.name()] = m[var].as_signed_long()
