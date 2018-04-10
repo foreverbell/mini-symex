@@ -47,6 +47,16 @@ new interesting input.
 
 We use `eval_pc` to prioritize the promising path.
 
+### Tricks
+
+To support some other checks like divided-by-zero, we may transform `a // b`
+to
+```python
+if b == 0:
+  assert False
+c = a // b
+```
+
 ## Requirements
 
 Python3.
