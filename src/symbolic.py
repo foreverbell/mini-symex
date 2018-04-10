@@ -11,7 +11,7 @@ import atexit
 N_CPUS = 4
 
 ## Use semaphore to limit the number of concurrent processes,
-## we allow 4 processes running simultaneously.
+## we allow N_CPUS processes running simultaneously.
 sem = Semaphore("/fork_sem", O_CREAT, 0o644, N_CPUS)
 sem.unlink()
 sem.acquire()

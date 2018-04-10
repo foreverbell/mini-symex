@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 
+## Example taken from angr paper. Slightly modified.
+## (State of) The Art of War: Offensive Techniques in Binary Analysis.
+
 from concolic import *
 
 def test_me():
@@ -14,6 +17,7 @@ def test_me():
     value = bs[num]
 
   if num < 100 and num % 15 == 2 and num % 11 == 6:
+    ## only num=17 is a solution
     value = bs[num]
 
   count = 0
